@@ -1,0 +1,28 @@
+svg {
+    width: 45%;
+    position: relative;
+    margin: 0 auto;
+    background: #eaeaea;
+}
+
+.sonic-bg {
+    background: url('bg.svg');
+    color: #4d4d4d;
+}
+.line {
+    fill: none;
+    stroke: "steelblue";
+    stroke-width: 1.5px;
+}
+.rocket {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    transform: rotate(90deg);
+}
+.littlePerson {
+    position: relative;
+    bottom: 0px;
+    left: 100px;
+
+}
