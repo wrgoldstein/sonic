@@ -55,7 +55,6 @@ sound = {
     },
 
     update: function(state) {
-        console.log(state * stepsize);
         rocket.setAttribute("y", -state * stepsize)
         state_radii = this.radii.slice(0, state);
         circles = d3.select(".soundwaves")
@@ -79,12 +78,10 @@ sound = {
         }).attr("stroke-opacity", function(d) {
             return .5 - d / offset_width
         })
-
     }
 }
 
 sound.init();
-
 
 function brushed() {
     var value = brush.extent()[0];
@@ -98,10 +95,21 @@ function brushed() {
     sound.update(value);
 }
 
-rocketslider
-    .call(brush.event)
-    .transition() // gratuitous intro!
-    .duration(1500)
-    .ease("linear")
-    .call(brush.extent([150, 150]))
-    .call(brush.event);
+function move(x) {
+    pos = brush.extent()[0]
+    right_edge = document.getElementById("sliderbox").offsetWidth;;
+    if (x < 0 || x > right_edge) {
+        var x = right_edge;
+    }
+
+    var duration = Math.abs(10 * (x - pos));
+
+
+    rocketslider
+        .call(brush.event)
+        .transition()
+        .duration(duration)
+        .ease("linear")
+        .call(brush.extent([x, x]))
+        .call(brush.event);
+}
