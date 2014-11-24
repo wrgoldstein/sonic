@@ -1,12 +1,30 @@
-svg {
-    width: 45%;
-    position: relative;
-    margin: 0 auto;
-    background: #eaeaea;
+body {
+    background-color: #aeaeae;
 }
-
+.container {
+    width: 80%;
+    height: 50%;
+    position: relative;
+    margin-top: 10px;
+    margin-left: 10%;
+    background: #eaeaea;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.15);
+}
+#sliderbox {
+    margin-left: 25%;
+    height: 15px;
+    border-radius: 5px;
+    background: #bababa;
+}
+#handle {
+    cursor: pointer;
+}
 .sonic-bg {
+    width: 100%;
     background: url('bg.svg');
+    background-size: 100%;
+    background-position: left 0px bottom 50%;
+    margin-top: 25px;
     color: #4d4d4d;
 }
 .line {
@@ -14,15 +32,12 @@ svg {
     stroke: "steelblue";
     stroke-width: 1.5px;
 }
-.rocket {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    transform: rotate(90deg);
-}
-.littlePerson {
-    position: relative;
-    bottom: 0px;
-    left: 100px;
-
+input {
+    transform: translate(0%, -75%);
+    margin-left: 5px;
+    height: 90px;
+    width: 80px;
+    font-size: 48px;
+    font-family: Impact;
+    text-align: center;
 }

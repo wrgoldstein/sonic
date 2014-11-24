@@ -2,12 +2,12 @@ var width = 600,
     height = 300,
     speed_of_rocket = 8,
     speed_of_sound = 5,
-    steps = 300,
+    steps = 90,
     sound_origin_x = 0,
 
     max_radius = steps * speed_of_sound,
     sound_profile = [],
-    sound_circle_radii = [];
+    sound_circle_radii = [0];
 
 var xscale = d3.scale.linear()
     .domain([0, steps])
@@ -28,7 +28,8 @@ var line = d3.svg.line()
 // svg background
 var svg = d3.select(".sonic-bg").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("id", "sonic-bg");
 
 var g = d3.select(".graph-bg").append("svg")
     .attr("width", width)
@@ -49,97 +50,94 @@ var leader = g.append("circle")
     .attr("r", 5)
     .style("fill", "red");
 
-// ROCKETSHIP -- animate with CSS
-var rocket = new Image(100, 100);
-rocket.src = "rocket.png";
-rocket.className = "rocket";
+var offset_height = document.getElementById("sonic-bg").offsetHeight,
+    offset_width = document.getElementById("sonic-bg").offsetWidth;
 
-// div to hold rocket
-var div = d3.select(".container").append("div")
-    .attr("width", rocket.width)
-    .attr("height", rocket.height)
-    .attr("id", "rocketDiv")
-    .style("position", "absolute")
-    .style("top", "6px");
+little_person.x = offset_width / 2
+little_person.y = offset_height - 50
 
-rocketDiv.appendChild(rocket);
+rocket.speed = 0
+
+// d3.select(".littlePerson")
+//     .attr("x", offset_width / 2)
+//     .attr("y", offset_height - 50);
+
 
 // SOUND CIRCLES
-ii = 0;
+k = 0;
 
 function update() {
-    ii++;
-    // new sound circle
-    sound_circle_radii.push(0);
-
-    // update circle radii
-    for (i = 0; i < sound_circle_radii.length; i++) {
-        sound_circle_radii[i] += speed_of_sound;
-    };
-
-    //update rocketship position
-    sound_origin_x += speed_of_rocket;
-    div.style("left", sound_origin_x);
-
-    rocketDiv.style.left = sound_origin_x + "px";
-
-    //enter the new circles
-    var sound_circles = svg.selectAll("circle").data(sound_circle_radii);
-
-    sound_circles.enter()
-        .append("circle")
-        .attr("cx", sound_origin_x + 22)
-        .attr("cy", 45)
-        .style("stroke", "black")
-        .style("fill-opacity", 0);
-
-    sound_circles.attr("r", function(d) {
-        return d;
-    });
-
-    // sound profile
-    var little_person_x = 300,
-        little_person_height = 50,
-        v_distance_to_rocket = 300 - little_person_height;
-
-    function sound_pressure(radius, i) {
-        var this_sound_origin_x = i * speed_of_rocket;
-        x = this_sound_origin_x - little_person_x
-        y = v_distance_to_rocket
-
-        if (Math.abs(Math.sqrt(Math.pow(y, 2) + Math.pow(x, 2)) - radius) < little_person_height) {
-            return 2 / Math.pow(radius, .5)
-        } else {
-            return 0
+        k++;
+        // new sound circle
+        any_null = sound_circle_radii.every(function(v) {
+            return v === null;
+        });
+        console.log(any_null)
+        if (k % 2 == 0 && !any_null) {
+            sound_circle_radii.push(0);
         }
-    };
+        // update circle radii
+        for (i = 0; i < sound_circle_radii.length; i++) {
+            sound_circle_radii[i] += speed_of_sound;
+        }
+        //update rocketship position
+        sound_origin_x += speed_of_rocket;
+        rocket.y = -sound_origin_x + -70;
+        rocket.speed++;
 
-    pressure = sound_circle_radii.map(sound_pressure).reduce(function(a, b) {
-        return a + b
-    });
+        // enter the new circles
+        var sound_circles = svg.selectAll("circle").data(sound_circle_radii);
 
-    path.transition()
-        .duration(500)
-        .ease("linear")
-        .attr("d", line);
+        sound_circles.enter()
+            .append("circle")
+            .attr("cx", sound_origin_x + 22)
+            .attr("cy", 45)
+            .style("stroke", "black")
+            .style("fill-opacity", 0);
 
-    leader
-        .attr("cx", xscale(ii))
-        .attr("cy", yscale(pressure));
-}
+        sound_circles.attr("r", function(d) {
+            if (d == "NaN") {
+                return null
+            }
+            return d;
+        });
 
-(function(count) {
-    if (count < steps) {
-        // call the function.
-        update();
 
-        // The currently executing function which is an anonymous function.
-        var caller = arguments.callee;
-        window.setTimeout(function() {
-            // the caller and the count variables are
-            // captured in a closure as they are defined
-            // in the outside scope.
-            caller(count + 1);
-        }, 50);
-    }
-})(0);
+        function update_sound_profile() {
+            // sound profile
+            var little_person_x = document.getElementById("sonic-bg").offsetWidth / 2,
+                little_person_height = 50,
+                v_distance_to_rocket = 300 - little_person_height;
+
+            function sound_pressure(radius, i) {
+                var this_sound_origin_x = i * speed_of_rocket;
+                x = this_sound_origin_x - little_person_x
+                y = v_distance_to_rocket
+
+                if (Math.abs(Math.sqrt(Math.pow(y, 2) + Math.pow(x, 2)) - radius) < little_person_height) {
+                    return 2 / Math.pow(radius, .5)
+                } else {
+                    return 0
+                }
+            };
+
+            pressure = sound_circle_radii.map(sound_pressure).reduce(function(a, b) {
+                return a + b
+            });
+        }
+
+        (function(count) {
+            if (count < steps) {
+                // call the function.
+                update();
+
+                // The currently executing function which is an anonymous function.
+                var caller = arguments.callee;
+                window.setTimeout(function() {
+                    // the caller and the count variables are
+                    // captured in a closure as they are defined
+                    // in the outside scope.
+                    caller(count + 1);
+                }, 5);
+            }
+        })(0);
